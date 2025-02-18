@@ -9,7 +9,7 @@ pipeline {
         stage('Condition1') {
             steps {
                 script {
-                    echo "This is the ${env.BRANCH_NAME} branch"  // Print the branch name
+                    echo "This is the ${env.GIT_BRANCH} branch"  // Print the branch name
                 }
             }
         }
@@ -18,7 +18,7 @@ pipeline {
             steps {
                 script {
                     // Check if the branch is 'main'
-                    if (env.BRANCH_NAME == 'main') {
+                    if (env.GIT_BRANCH == 'main') {
                         echo 'This is the main branch'
                     } else {
                         echo 'This is not the main branch'
@@ -59,7 +59,7 @@ pipeline {
             steps {
                 script {
                     // Only ask for approval on 'main' branch
-                    if (env.BRANCH_NAME == 'main') {
+                    if (env.GIT_BRANCH == 'main') {
                         input message: 'Do you want to approve the deployment?', ok: 'Yes'
                     } else {
                         echo 'This is not the main branch, skipping approval.'
