@@ -6,60 +6,46 @@ pipeline {
     }
 
     stages {
-        stage('Condition1') {
+        stage('Condition') {
             steps {
                 script {
                     echo "This is the ${env.GIT_BRANCH} branch"  // Print the branch name
                 }
             }
         }
-
-        stage('Condition') {
+        stage('Checkout') {
             steps {
                 script {
-                    // Check if the branch is 'main'
-                    if (env.GIT_BRANCH == 'origin/main') {
-                        echo 'This is the main branch'
-                    } else {
-                        echo 'This is not the main branch'
-                    }
+                    checkout scm
                 }
             }
         }
 
-        // stage('Checkout') {
-        //     steps {
-        //         script {
-        //             checkout scm
-        //         }
-        //     }
-        // }
+        stage('Terraform Init') {
+            steps {
+                script {
+                    sh """
+                    terraform init -reconfigure
+                    """
+                }
+            }
+        }
 
-        // stage('Terraform Init') {
-        //     steps {
-        //         script {
-        //             sh """
-        //             terraform init -reconfigure
-        //             """
-        //         }
-        //     }
-        // }
-
-        // stage('Terraform Plan') {
-        //     steps {
-        //         script {
-        //             sh """
-        //             terraform plan -lock=false -out=tfplan
-        //             """
-        //         }
-        //     }
-        // }
+        stage('Terraform Plan') {
+            steps {
+                script {
+                    sh """
+                    terraform plan -lock=false -out=tfplan
+                    """
+                }
+            }
+        }
 
         stage('Approval') {
             steps {
                 script {
                     // Only ask for approval on 'main' branch
-                    if (env.GIT_BRANCH == 'origin/main') {
+                    if (env.GIT_BRANCH == 'origin/main' || env.GIT_BRANCH == 'main') {
                         input message: 'Do you want to approve the deployment?', ok: 'Yes'
                     } else {
                         echo 'This is not the main branch, skipping approval.'
@@ -68,18 +54,18 @@ pipeline {
             }
         }
 
-        // stage('Terraform Apply') {
-        //     when {
-        //         branch 'main'  // This stage will only run on 'main' branch
-        //     }
-        //     steps {
-        //         script {
-        //             sh """
-        //             terraform apply -auto-approve tfplan
-        //             """
-        //         }
-        //     }
-        // }
+        stage('Terraform Apply') {
+            steps {
+                script {
+                   if (env.GIT_BRANCH == 'origin/main' || env.GIT_BRANCH == 'main') {
+                        terraform apply -auto-approve tfplan
+
+                    } else {
+                        echo 'This is not the main branch, skipping apply.'
+                    }
+                }
+            }
+        }
     }
 
     post {
