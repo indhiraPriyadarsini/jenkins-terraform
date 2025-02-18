@@ -17,11 +17,15 @@ pipeline {
             }
         }
         stage('Condition') {
-            if (branchName == 'origin/main' || branchName == 'main') {
-                    echo 'This is the main branch'
-                } else {
-                    echo 'This is not the main branch'
+            steps {
+                script {
+                    if (branchName == 'origin/main' || branchName == 'main') {
+                        echo 'This is the main branch'
+                    } else {
+                        echo 'This is not the main branch'
                 }
+                }
+            }
         }
     }
     //     stage('Checkout') {
