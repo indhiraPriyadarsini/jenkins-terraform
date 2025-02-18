@@ -4,82 +4,82 @@ pipeline {
     triggers {
         githubPush()  // This listens for GitHub webhook events
     }
-    // steps {
-    //             input message: 'Do you want to approve the deployment?', ok: 'Yes'
-    // }
 
     stages {
         stage('Condition1') {
             steps {
                 script {
-                    echo "This is the ${env.GIT_BRANCH} branch"  // Print the branch name
+                    echo "This is the ${env.BRANCH_NAME} branch"  // Print the branch name
                 }
             }
         }
+
         stage('Condition') {
             steps {
                 script {
-                    if (env.GIT_BRANCH == 'origin/main' || env.GIT_BRANCH == 'main') {
+                    // Check if the branch is 'main'
+                    if (env.BRANCH_NAME == 'main') {
                         echo 'This is the main branch'
                     } else {
-                        echo 'This is not the main branch'
-                }
-                }
-            }
-        }
-    }
-    //     stage('Checkout') {
-    //         steps {
-    //             script {
-    //                 checkout scm
-    //             }
-    //         }
-    //     }
-
-    //     stage('Terraform Init') {
-    //         steps {
-    //             script {
-    //                 sh """
-    //                 terraform init -reconfigure
-    //                 """
-    //             }
-    //         }
-    //     }
-
-    //     stage('Terraform Plan') {
-    //         steps {
-    //             script {
-    //                 sh """
-    //                 terraform plan -lock=false -out=tfplan
-    //                 """
-    //             }
-    //         }
-    //     }
-
-        stage('Approval') {
-            steps {
-                script {
-                    if (env.GIT_BRANCH == 'origin/main' || env.GIT_BRANCH == 'main') {
-                        input message: 'Do you want to approve the deployment?', ok: 'Yes'
-                    }else{
                         echo 'This is not the main branch'
                     }
                 }
             }
         }
 
-        stage('Terraform Apply') {
-            when {
-                branch 'main'
-            }
+        // stage('Checkout') {
+        //     steps {
+        //         script {
+        //             checkout scm
+        //         }
+        //     }
+        // }
+
+        // stage('Terraform Init') {
+        //     steps {
+        //         script {
+        //             sh """
+        //             terraform init -reconfigure
+        //             """
+        //         }
+        //     }
+        // }
+
+        // stage('Terraform Plan') {
+        //     steps {
+        //         script {
+        //             sh """
+        //             terraform plan -lock=false -out=tfplan
+        //             """
+        //         }
+        //     }
+        // }
+
+        stage('Approval') {
             steps {
                 script {
-                    sh """
-                    terraform apply -auto-approve tfplan
-                    """
+                    // Only ask for approval on 'main' branch
+                    if (env.BRANCH_NAME == 'main') {
+                        input message: 'Do you want to approve the deployment?', ok: 'Yes'
+                    } else {
+                        echo 'This is not the main branch, skipping approval.'
+                    }
                 }
             }
         }
+
+        // stage('Terraform Apply') {
+        //     when {
+        //         branch 'main'  // This stage will only run on 'main' branch
+        //     }
+        //     steps {
+        //         script {
+        //             sh """
+        //             terraform apply -auto-approve tfplan
+        //             """
+        //         }
+        //     }
+        // }
     }
 
     post {
