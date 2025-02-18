@@ -19,7 +19,7 @@ pipeline {
         stage('Condition') {
             steps {
                 script {
-                    if (branchName == 'origin/main' || branchName == 'main') {
+                    if (env.GIT_BRANCH == 'origin/main' || env.GIT_BRANCH == 'main') {
                         echo 'This is the main branch'
                     } else {
                         echo 'This is not the main branch'
