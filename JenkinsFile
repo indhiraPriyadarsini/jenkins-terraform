@@ -5,59 +5,75 @@ pipeline {
         githubPush()  // This listens for GitHub webhook events
     }
 
-    stages {
-        stage('Checkout') {
-            steps {
-                script {
-                    checkout scm
-                }
-            }
-        }
-
-        stage('Terraform Init') {
-            steps {
-                script {
-                    sh """
-                    terraform init -reconfigure
-                    """
-                }
-            }
-        }
-
-        stage('Terraform Plan') {
-            steps {
-                script {
-                    sh """
-                    terraform plan -lock=false -out=tfplan
-                    """
-                }
-            }
-        }
-
-        stage('Approval') {
-            when {
-                branch 'main'
-            }
-            steps {
-                timeout(time: 15, unit: "MINUTES") {
-	                    input message: 'Do you want to approve the deployment?', ok: 'Yes'
-	                }
-            }
-        }
-
-        stage('Terraform Apply') {
-            when {
-                branch 'main'
-            }
-            steps {
-                script {
-                    sh """
-                    terraform apply -auto-approve tfplan
-                    """
-                }
-            }
+    stage('Condition') {
+    when {
+        branch 'main'
+    }
+    steps {
+        script {
+            echo "This is the main branch"
         }
     }
+    // steps {
+    //             input message: 'Do you want to approve the deployment?', ok: 'Yes'
+    // }
+}
+
+
+    // stages {
+    //     stage('Checkout') {
+    //         steps {
+    //             script {
+    //                 checkout scm
+    //             }
+    //         }
+    //     }
+
+    //     stage('Terraform Init') {
+    //         steps {
+    //             script {
+    //                 sh """
+    //                 terraform init -reconfigure
+    //                 """
+    //             }
+    //         }
+    //     }
+
+    //     stage('Terraform Plan') {
+    //         steps {
+    //             script {
+    //                 sh """
+    //                 terraform plan -lock=false -out=tfplan
+    //                 """
+    //             }
+    //         }
+    //     }
+
+
+    //     stage('Approval') {
+    //         when {
+    //             branch 'main'
+    //         }
+    //         steps {
+    //             timeout(time: 15, unit: "MINUTES") {
+	//                     input message: 'Do you want to approve the deployment?', ok: 'Yes'
+	//                 }
+    //         }
+    //     }
+
+    //     stage('Terraform Apply') {
+    //         when {
+    //             branch 'main'
+    //         }
+    //         steps {
+    //             script {
+    //                 sh """
+    //                 terraform apply -auto-approve tfplan
+    //                 """
+    //             }
+    //         }
+    //     }
+    // }
 
     post {
         always {
