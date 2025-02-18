@@ -70,4 +70,4 @@ variable "instance_type" {
     type = string
     default = "t2.micro"
   
-} //triggering repo...
+} //triggering repo 1 2 3
