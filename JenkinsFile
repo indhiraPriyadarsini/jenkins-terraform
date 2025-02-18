@@ -9,6 +9,13 @@ pipeline {
     // }
 
     stages {
+        stage('Condition1') {
+            steps {
+                script {
+                    echo "This is the ${env.GIT_BRANCH} branch"  // Print the branch name
+                }
+            }
+        }
         stage('Condition') {
             when {
                 branch 'main'
