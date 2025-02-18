@@ -39,9 +39,9 @@ pipeline {
                 branch 'main'
             }
             steps {
-                script {
-                    input message: 'Approve Terraform Apply?', ok: 'Apply'
-                }
+                timeout(time: 15, unit: "MINUTES") {
+	                    input message: 'Do you want to approve the deployment?', ok: 'Yes'
+	                }
             }
         }
 
