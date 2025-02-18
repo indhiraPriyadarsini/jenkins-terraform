@@ -18,7 +18,7 @@ pipeline {
         }
         stage('Condition') {
             when {
-                branch 'main'
+                branch 'origin/main'
             }
             steps {
                 script {
