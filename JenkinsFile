@@ -58,9 +58,7 @@ pipeline {
             steps {
                 script {
                    if (env.GIT_BRANCH == 'origin/main' || env.GIT_BRANCH == 'main') {
-                        sh """
-                        terraform apply -auto-approve tfplan
-                        """
+                        sh 'terraform apply -auto-approve tfplan'
                     } else {
                         echo 'This is not the main branch, skipping apply.'
                     }
