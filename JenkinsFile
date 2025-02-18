@@ -1,0 +1,70 @@
+pipeline {
+    agent any
+
+    triggers {
+        githubPush()  // This listens for GitHub webhook events
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                script {
+                    checkout scm
+                }
+            }
+        }
+
+        stage('Terraform Init') {
+            steps {
+                script {
+                    sh """
+                    terraform init
+                    """
+                }
+            }
+        }
+
+        stage('Terraform Plan') {
+            steps {
+                script {
+                    sh """
+                    terraform plan -out=tfplan
+                    """
+                }
+            }
+        }
+
+        stage('Approval') {
+            when {
+                branch 'main'
+            }
+            steps {
+                script {
+                    input message: 'Approve Terraform Apply?', ok: 'Apply'
+                }
+            }
+        }
+
+        stage('Terraform Apply') {
+            when {
+                branch 'main'
+            }
+            steps {
+                script {
+                    sh """
+                    terraform apply -auto-approve tfplan
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo "Pipeline execution complete"
+        }
+        failure {
+            echo "Pipeline failed!"
+        }
+    }
+}
