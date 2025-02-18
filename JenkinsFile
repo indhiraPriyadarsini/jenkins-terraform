@@ -56,30 +56,31 @@ pipeline {
     //         }
     //     }
 
-    //     stage('Approval') {
-    //         when {
-    //             branch 'main'
-    //         }
-    //         steps {
-    //             timeout(time: 15, unit: "MINUTES") {
-    //                     input message: 'Do you want to approve the deployment?', ok: 'Yes'
-    //                 }
-    //         }
-    //     }
+        stage('Approval') {
+            steps {
+                script {
+                    if (env.GIT_BRANCH == 'origin/main' || env.GIT_BRANCH == 'main') {
+                        input message: 'Do you want to approve the deployment?', ok: 'Yes'
+                    }else{
+                        echo 'This is not the main branch'
+                    }
+                }
+            }
+        }
 
-    //     stage('Terraform Apply') {
-    //         when {
-    //             branch 'main'
-    //         }
-    //         steps {
-    //             script {
-    //                 sh """
-    //                 terraform apply -auto-approve tfplan
-    //                 """
-    //             }
-    //         }
-    //     }
-    // }
+        stage('Terraform Apply') {
+            when {
+                branch 'main'
+            }
+            steps {
+                script {
+                    sh """
+                    terraform apply -auto-approve tfplan
+                    """
+                }
+            }
+        }
+    }
 
     post {
         always {
