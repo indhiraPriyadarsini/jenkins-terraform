@@ -7,21 +7,18 @@ pipeline {
     // steps {
     //             input message: 'Do you want to approve the deployment?', ok: 'Yes'
     // }
-}
-
 
     stages {
-
-
-    stage('Condition') {
-    when {
-        branch 'main'
-    }
-    steps {
-        script {
-            echo "This is the main branch"
+        stage('Condition') {
+            when {
+                branch 'main'
+            }
+            steps {
+                script {
+                    echo 'This is the main branch'
+                }
+            }
         }
-    }
     }
     //     stage('Checkout') {
     //         steps {
@@ -51,15 +48,14 @@ pipeline {
     //         }
     //     }
 
-
     //     stage('Approval') {
     //         when {
     //             branch 'main'
     //         }
     //         steps {
     //             timeout(time: 15, unit: "MINUTES") {
-	//                     input message: 'Do you want to approve the deployment?', ok: 'Yes'
-	//                 }
+    //                     input message: 'Do you want to approve the deployment?', ok: 'Yes'
+    //                 }
     //         }
     //     }
 
@@ -79,10 +75,10 @@ pipeline {
 
     post {
         always {
-            echo "Pipeline execution complete"
+            echo 'Pipeline execution complete'
         }
         failure {
-            echo "Pipeline failed!"
+            echo 'Pipeline failed!'
         }
     }
 }
