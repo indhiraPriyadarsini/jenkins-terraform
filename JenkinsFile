@@ -4,6 +4,14 @@ pipeline {
     triggers {
         githubPush()  // This listens for GitHub webhook events
     }
+    // steps {
+    //             input message: 'Do you want to approve the deployment?', ok: 'Yes'
+    // }
+}
+
+
+    stages {
+
 
     stage('Condition') {
     when {
@@ -14,13 +22,7 @@ pipeline {
             echo "This is the main branch"
         }
     }
-    // steps {
-    //             input message: 'Do you want to approve the deployment?', ok: 'Yes'
-    // }
-}
-
-
-    // stages {
+    }
     //     stage('Checkout') {
     //         steps {
     //             script {
