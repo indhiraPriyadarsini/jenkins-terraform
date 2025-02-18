@@ -28,7 +28,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                    terraform plan -out=tfplan
+                    terraform plan -lock=false -out=tfplan
                     """
                 }
             }
